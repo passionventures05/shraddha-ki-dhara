@@ -31,8 +31,12 @@ jobs:
       - name: Install packages
         run: npm ci
 
-      # Type-check + tests (they also validate every kit in content/products).
-      # If this fails, nothing is deployed and the live site stays as it was.
+      # Turns content/ into src/generated/ (not stored in git), which the type-check needs.
+      # It also validates every kit and stops with a plain message if one has a mistake.
+      - name: Prepare content
+        run: npm run prepare:content
+
+      # Type-check + tests. If this fails, nothing is deployed and the live site stays as it was.
       - name: Check
         run: npm run check
 
