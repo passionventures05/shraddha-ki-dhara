@@ -1,0 +1,14 @@
+name = "shraddha-cms-auth"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+[vars]
+# Comma-separated list of sites allowed to receive the login token (no trailing slash, no path).
+# Keep both entries if visitors can reach the site with or without "www".  Includes the GitHub address so the admin page also works before the domain is connected.
+ALLOWED_ORIGINS = "https://shraddhakidhara.com,https://www.shraddhakidhara.com,https://passionventures05.github.io"
+# GitHub Pages (free) needs a PUBLIC repository, so the narrower "public_repo" permission is enough.
+GITHUB_SCOPE = "public_repo,user"
+
+# Secrets (NOT stored here) - set once with:
+#   npx wrangler secret put GITHUB_CLIENT_ID
+#   npx wrangler secret put GITHUB_CLIENT_SECRET

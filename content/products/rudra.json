@@ -1,0 +1,26 @@
+{
+  "name": "Rudrabhishek Kit",
+  "nameHi": "रुद्राभिषेक किट",
+  "category": "Shiva",
+  "priceBasic": 549,
+  "priceStandard": 999,
+  "pricePremium": 1699,
+  "contents": [
+    "Bilva patra",
+    "Dhatura & bhasma",
+    "Panchamrit set",
+    "Chandan & rudraksha",
+    "Gangajal"
+  ],
+  "contentsHi": [
+    "बिल्व पत्र",
+    "धतूरा व भस्म",
+    "पंचामृत सेट",
+    "चंदन व रुद्राक्ष",
+    "गंगाजल"
+  ],
+  "description": "Bilva patra, bhasma, chandan and Gangajal for Rudrabhishek.",
+  "descriptionHi": "रुद्राभिषेक के लिए बिल्व पत्र, भस्म, चंदन और गंगाजल।",
+  "available": true,
+  "order": 60
+}

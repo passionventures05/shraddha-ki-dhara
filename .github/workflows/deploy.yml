@@ -1,0 +1,61 @@
+name: Deploy to GitHub Pages
+
+# Runs on every push to main (including every CMS "Publish") and can be started by hand
+# from the Actions tab. It checks the content, builds the site and publishes it.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one deploy at a time; a newer push replaces one that is still waiting.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install packages
+        run: npm ci
+
+      # Type-check + tests (they also validate every kit in content/products).
+      # If this fails, nothing is deployed and the live site stays as it was.
+      - name: Check
+        run: npm run check
+
+      # "prebuild" turns content/ into src/generated/ and copies the CMS files into public/admin.
+      - name: Build
+        run: npm run build
+        env:
+          # Optional repository variable (Settings > Secrets and variables > Actions > Variables).
+          # Set SITE_URL to your live address, e.g. https://shraddhakidhara.com. Empty = built-in default.
+          NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL }}
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

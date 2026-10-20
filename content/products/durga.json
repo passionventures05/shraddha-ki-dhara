@@ -1,0 +1,26 @@
+{
+  "name": "Navratri Durga Kit",
+  "nameHi": "नवरात्रि दुर्गा किट",
+  "category": "Devi",
+  "priceBasic": 649,
+  "priceStandard": 1149,
+  "pricePremium": 1949,
+  "contents": [
+    "Chunri & bangles",
+    "Kumkum & sindoor",
+    "Jau (barley) seeds",
+    "Akhand diya items",
+    "Incense & camphor"
+  ],
+  "contentsHi": [
+    "चुनरी व चूड़ियाँ",
+    "कुमकुम व सिंदूर",
+    "जौ के बीज",
+    "अखंड दीप सामग्री",
+    "धूप व कपूर"
+  ],
+  "description": "Chunri, bangles, jau and akhand diya items for Navratri worship of Maa Durga.",
+  "descriptionHi": "माँ दुर्गा की नवरात्रि पूजा के लिए चुनरी, चूड़ियाँ, जौ और अखंड दीप सामग्री।",
+  "available": true,
+  "order": 50
+}

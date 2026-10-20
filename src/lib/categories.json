@@ -1,0 +1,10 @@
+{
+  "categories": [
+    { "id": "Ganesh", "hi": "गणेश" },
+    { "id": "Lakshmi", "hi": "लक्ष्मी" },
+    { "id": "Vrat Katha", "hi": "व्रत कथा" },
+    { "id": "Home", "hi": "गृह" },
+    { "id": "Devi", "hi": "देवी" },
+    { "id": "Shiva", "hi": "शिव" }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "Griha Pravesh Kit",
+  "nameHi": "गृह प्रवेश किट",
+  "category": "Home",
+  "priceBasic": 999,
+  "priceStandard": 1699,
+  "pricePremium": 2599,
+  "contents": [
+    "Kalash set",
+    "Mango leaf toran",
+    "Navagraha samagri",
+    "Havan kund items",
+    "Coconut & red cloth"
+  ],
+  "contentsHi": [
+    "कलश सेट",
+    "आम पत्ते का तोरण",
+    "नवग्रह सामग्री",
+    "हवन कुंड सामग्री",
+    "नारियल व लाल वस्त्र"
+  ],
+  "description": "Kalash, mango-leaf toran and navagraha samagri to bless a new home.",
+  "descriptionHi": "नए घर के आशीर्वाद के लिए कलश, आम पत्ते का तोरण और नवग्रह सामग्री।",
+  "available": true,
+  "order": 40
+}

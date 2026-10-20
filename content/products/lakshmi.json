@@ -1,0 +1,26 @@
+{
+  "name": "Lakshmi Puja Kit",
+  "nameHi": "लक्ष्मी पूजा किट",
+  "category": "Lakshmi",
+  "priceBasic": 599,
+  "priceStandard": 1099,
+  "pricePremium": 1799,
+  "contents": [
+    "Kumkum & Haldi",
+    "Lotus seeds (kamal gatta)",
+    "Cowries & coins set",
+    "Incense & camphor",
+    "Clay diyas"
+  ],
+  "contentsHi": [
+    "कुमकुम व हल्दी",
+    "कमल गट्टा",
+    "कौड़ी व सिक्कों का सेट",
+    "धूप व कपूर",
+    "मिट्टी के दीये"
+  ],
+  "description": "Kumkum, haldi, lotus seeds, cowries and clay diyas for a graceful Lakshmi puja.",
+  "descriptionHi": "सुंदर लक्ष्मी पूजा के लिए कुमकुम, हल्दी, कमल गट्टा, कौड़ी और मिट्टी के दीये।",
+  "available": true,
+  "order": 20
+}

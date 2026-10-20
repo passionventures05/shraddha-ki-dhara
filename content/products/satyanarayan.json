@@ -1,0 +1,26 @@
+{
+  "name": "Satyanarayan Puja Kit",
+  "nameHi": "सत्यनारायण पूजा किट",
+  "category": "Vrat Katha",
+  "priceBasic": 699,
+  "priceStandard": 1199,
+  "pricePremium": 1899,
+  "contents": [
+    "Panchamrit set",
+    "Tulsi & Janeu",
+    "Supari & paan",
+    "Katha book",
+    "Havan samagri"
+  ],
+  "contentsHi": [
+    "पंचामृत सेट",
+    "तुलसी व जनेऊ",
+    "सुपारी व पान",
+    "कथा पुस्तक",
+    "हवन सामग्री"
+  ],
+  "description": "Panchamrit, tulsi, katha book and havan samagri for the Satyanarayan katha.",
+  "descriptionHi": "सत्यनारायण कथा के लिए पंचामृत, तुलसी, कथा पुस्तक और हवन सामग्री।",
+  "available": true,
+  "order": 30
+}

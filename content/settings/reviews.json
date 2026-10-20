@@ -1,0 +1,22 @@
+{
+  "items": [
+    {
+      "name": "Priya, Mumbai",
+      "nameHi": "प्रिया, मुंबई",
+      "text": "Everything for our Satyanarayan puja came in one beautiful box. Nothing was missing.",
+      "textHi": "सत्यनारायण पूजा की सारी सामग्री एक सुंदर डिब्बे में आई। कुछ भी कम नहीं था।"
+    },
+    {
+      "name": "Rakesh, Pune",
+      "nameHi": "राकेश, पुणे",
+      "text": "Fresh samagri and a clear list inside. Perfect for Griha Pravesh.",
+      "textHi": "ताज़ी सामग्री और भीतर साफ़ सूची। गृह प्रवेश के लिए बिल्कुल सही।"
+    },
+    {
+      "name": "Anita, Delhi",
+      "nameHi": "अनीता, दिल्ली",
+      "text": "Ordered for Navratri. The packing felt like a blessing in itself.",
+      "textHi": "नवरात्रि के लिए मँगाया। पैकिंग स्वयं एक आशीर्वाद जैसी लगी।"
+    }
+  ]
+}

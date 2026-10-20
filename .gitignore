@@ -1,0 +1,9 @@
+node_modules
+.next
+out
+next-env.d.ts
+*.tsbuildinfo
+
+# generated on every dev/build from content/ + node_modules (never edit by hand)
+src/generated/
+public/admin/*.js

@@ -1,0 +1,24 @@
+{
+  "items": [
+    {
+      "name": "Brass pooja thali",
+      "nameHi": "पीतल की पूजा थाली",
+      "price": 349
+    },
+    {
+      "name": "Brass diya set",
+      "nameHi": "पीतल दीया सेट",
+      "price": 249
+    },
+    {
+      "name": "Extra samagri pack",
+      "nameHi": "अतिरिक्त सामग्री पैक",
+      "price": 199
+    },
+    {
+      "name": "Fresh flower garland",
+      "nameHi": "ताज़े फूलों की माला",
+      "price": 149
+    }
+  ]
+}

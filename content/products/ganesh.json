@@ -1,0 +1,26 @@
+{
+  "name": "Ganesh Puja Kit",
+  "nameHi": "गणेश पूजा किट",
+  "category": "Ganesh",
+  "priceBasic": 499,
+  "priceStandard": 899,
+  "pricePremium": 1499,
+  "contents": [
+    "Roli & Akshat",
+    "Durva & Moli",
+    "Modak prasad",
+    "Incense & camphor",
+    "Ghee diya set"
+  ],
+  "contentsHi": [
+    "रोली व अक्षत",
+    "दूर्वा व मौली",
+    "मोदक प्रसाद",
+    "धूप व कपूर",
+    "घी दीया सेट"
+  ],
+  "description": "Everything for a Ganesh puja at home, from roli and durva to modak prasad and a ghee diya set.",
+  "descriptionHi": "घर पर गणेश पूजा की हर वस्तु, रोली और दूर्वा से लेकर मोदक प्रसाद और घी दीया सेट तक।",
+  "available": true,
+  "order": 10
+}

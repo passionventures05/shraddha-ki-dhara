@@ -1,0 +1,251 @@
+# ============================================================================
+#  Decap CMS configuration  –  Shraddha Ki Dhara (puja kits)
+#  >>> BEFORE GOING LIVE, EDIT THESE TWO VALUES (see docs/CMS-SETUP.md) <<<
+#      repo:      your GitHub  "username/repository"
+#      base_url:  the address of your deployed Cloudflare login worker
+# ============================================================================
+backend:
+  name: github
+  repo: passionventures05/shraddha-ki-dhara             # <-- EDIT (your GitHub "username/repository")
+  branch: main
+  base_url: https://shraddha-cms-auth.YOUR_WORKERS_SUBDOMAIN.workers.dev   # <-- EDIT (filled in after the worker is deployed)
+  auth_endpoint: auth
+  commit_messages:
+    create: 'Add kit "{{slug}}"'
+    update: 'Update "{{slug}}"'
+    delete: 'Delete kit "{{slug}}"'
+    uploadMedia: 'Upload photo "{{path}}"'
+    deleteMedia: 'Delete photo "{{path}}"'
+
+# Used only when you run the CMS on your own computer (npm run dev:cms). Ignored on the live site.
+local_backend: true
+
+publish_mode: simple            # saving = published (the site rebuilds in about a minute)
+site_url: https://shraddhakidhara.com
+display_url: https://shraddhakidhara.com
+logo_url: /icon.svg
+locale: en
+
+media_folder: public/uploads/products
+public_folder: /uploads/products
+
+collections:
+  # ---------------------------------------------------------------- PUJA KITS
+  - name: products
+    label: Puja Kits
+    label_singular: Puja Kit
+    description: Every puja kit shown on the website. Add a kit, change a price or photo, or hide a kit.
+    folder: content/products
+    create: true
+    delete: true
+    extension: json
+    format: json
+    slug: "{{slug}}"
+    identifier_field: name
+    summary: "{{name}}  ·  {{category}}  ·  from ₹{{priceBasic}}"
+    sortable_fields: ["name", "category", "priceBasic", "order"]
+    view_filters:
+      - { label: "Hidden kits", field: available, pattern: false }
+      - { label: "No photo yet", field: image, pattern: "^$" }
+    view_groups:
+      - { label: Category, field: category }
+    fields:
+      - label: Kit name (English)
+        name: name
+        widget: string
+        hint: "Shown to customers. Each kit must have a different name."
+        pattern: ["^.{3,80}$", "Please enter 3 to 80 characters"]
+
+      - label: Kit name (Hindi)
+        name: nameHi
+        widget: string
+        required: false
+        hint: "Shown when the visitor switches the site to Hindi. If empty, the English name is shown."
+
+      - label: Photo
+        name: image
+        widget: image
+        required: false
+        hint: "JPG or WebP, at least 800 px wide, under 800 KB. A clear, well-lit photo works best. Until you add one, a golden diya picture is shown."
+
+      - label: Category
+        name: category
+        widget: select
+        hint: "Choose the deity or occasion this kit belongs to."
+        options:
+          - "Ganesh"
+          - "Lakshmi"
+          - "Vrat Katha"
+          - "Home"
+          - "Devi"
+          - "Shiva"
+
+      - label: Basic price (₹)
+        name: priceBasic
+        widget: number
+        value_type: int
+        min: 1
+        hint: "Whole rupees."
+
+      - label: Standard price (₹)
+        name: priceStandard
+        widget: number
+        value_type: int
+        min: 1
+        hint: "Usually higher than Basic."
+
+      - label: Premium price (₹)
+        name: pricePremium
+        widget: number
+        value_type: int
+        min: 1
+        hint: "Usually higher than Standard."
+
+      - label: "What's in the kit (English)"
+        name: contents
+        widget: list
+        required: false
+        hint: "One item per line. Press 'Add item' for each one."
+        field: { label: Item, name: item, widget: string }
+
+      - label: "What's in the kit (Hindi)"
+        name: contentsHi
+        widget: list
+        required: false
+        hint: "Optional. Same items in Hindi, in the same order."
+        field: { label: Item, name: item, widget: string }
+
+      - label: Description (English)
+        name: description
+        widget: text
+        required: false
+        hint: "A sentence or two about the puja and what the kit contains."
+
+      - label: Description (Hindi)
+        name: descriptionHi
+        widget: text
+        required: false
+
+      - label: Show on website
+        name: available
+        widget: boolean
+        default: true
+        hint: "Switch OFF to hide the kit without deleting it (e.g. out of stock)."
+
+      - label: Position in the list
+        name: order
+        widget: number
+        value_type: int
+        required: false
+        hint: "1 = shown first. The kits are numbered 10, 20, 30… so 15 puts a kit between the kits at 10 and 20. Leave empty to put it at the end."
+
+  # ------------------------------------------------------- WEBSITE CONTENT
+  - name: settings
+    label: Website Content
+    description: Business details, add-ons, videos, reviews, daily mantras, festival countdown and gallery photos.
+    files:
+      - name: site
+        label: Site details
+        file: content/settings/site.json
+        fields:
+          - { label: "WhatsApp number (with country code, digits only)", name: whatsapp, widget: string, hint: "Example: 919876543210. Orders are sent to this number.", pattern: ["^\\d{11,15}$", "Digits only, with the country code (11 to 15 digits)"] }
+          - { label: "Phone number to display", name: phoneDisplay, widget: string, required: false, hint: "Example: +91 98765 43210" }
+          - { label: "UPI ID", name: upi, widget: string, hint: "Customers pay the advance to this UPI ID. Example: name@okicici" }
+          - { label: Email, name: email, widget: string, required: false }
+          - { label: "YouTube channel link", name: youtube, widget: string, required: false }
+          - { label: "Minimum notice for an order (hours)", name: leadHours, widget: number, value_type: int, min: 0, max: 720, hint: "Customers must choose a date at least this many hours ahead." }
+          - { label: "Advance payment (%)", name: advancePercent, widget: number, value_type: int, min: 0, max: 100, hint: "Share of the total paid in advance to confirm an order." }
+          - label: "Pincodes you deliver to"
+            name: deliveryPincodes
+            widget: list
+            required: false
+            hint: "Leave empty to let customers confirm their area with you on WhatsApp."
+            field: { label: Pincode, name: pincode, widget: string, pattern: ["^\\d{6}$", "A pincode has 6 digits"] }
+
+      - name: addons
+        label: Add-ons
+        file: content/settings/addons.json
+        fields:
+          - label: Add-ons
+            name: items
+            widget: list
+            summary: "{{fields.name}} · ₹{{fields.price}}"
+            fields:
+              - { label: Name (English), name: name, widget: string }
+              - { label: Name (Hindi), name: nameHi, widget: string, required: false }
+              - { label: Price (₹), name: price, widget: number, value_type: int, min: 1 }
+
+      - name: videos
+        label: Videos
+        file: content/settings/videos.json
+        fields:
+          - label: Videos
+            name: items
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: Title (English), name: title, widget: string }
+              - { label: Title (Hindi), name: titleHi, widget: string, required: false }
+              - { label: "YouTube link", name: url, widget: string, hint: "Paste the full link, e.g. https://www.youtube.com/watch?v=..." }
+              - { label: "Cover photo (optional)", name: thumb, widget: image, required: false, hint: "If empty, YouTube's own thumbnail is used." }
+
+      - name: reviews
+        label: Reviews
+        file: content/settings/reviews.json
+        fields:
+          - label: Reviews
+            name: items
+            widget: list
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "Name and city (English)", name: name, widget: string, hint: "Example: Priya, Mumbai" }
+              - { label: "Name and city (Hindi)", name: nameHi, widget: string, required: false }
+              - { label: Review (English), name: text, widget: text }
+              - { label: Review (Hindi), name: textHi, widget: text, required: false }
+
+      - name: mantras
+        label: Daily mantras
+        file: content/settings/mantras.json
+        fields:
+          - label: "Mantras (one is shown each day, in turn)"
+            name: items
+            widget: list
+            summary: "{{fields.sanskrit}}"
+            fields:
+              - { label: "Sanskrit text", name: sanskrit, widget: text, hint: "Press Enter for a new line (a line per half-verse looks best)." }
+              - { label: "Meaning (English)", name: meaning, widget: text }
+              - { label: "Meaning (Hindi)", name: meaningHi, widget: text, required: false }
+
+      - name: festivals
+        label: Festival countdown
+        file: content/settings/festivals.json
+        fields:
+          - label: "Festivals (the next upcoming one is shown on the home page)"
+            name: items
+            widget: list
+            summary: "{{fields.name}} · {{fields.date}}"
+            hint: "Check each date against your panchang. Past festivals are skipped automatically."
+            fields:
+              - { label: Name (English), name: name, widget: string }
+              - { label: Name (Hindi), name: nameHi, widget: string, required: false }
+              - { label: Date, name: date, widget: datetime, time_format: false, date_format: "YYYY-MM-DD", format: "YYYY-MM-DD" }
+              - label: "Related kit category"
+                name: category
+                widget: select
+                required: false
+                options: ["Ganesh", "Lakshmi", "Vrat Katha", "Home", "Devi", "Shiva"]
+
+      - name: gallery
+        label: Gallery photos
+        file: content/settings/gallery.json
+        media_folder: public/uploads/gallery
+        public_folder: /uploads/gallery
+        fields:
+          - label: "Photos (shown in the palace-frame gallery on the home page)"
+            name: items
+            widget: list
+            summary: "{{fields.caption}}"
+            fields:
+              - { label: Photo, name: image, widget: image, hint: "JPG or WebP, under 800 KB." }
+              - { label: Caption (English), name: caption, widget: string, required: false }
+              - { label: Caption (Hindi), name: captionHi, widget: string, required: false }

@@ -1,0 +1,34 @@
+{
+  "items": [
+    {
+      "name": "Dussehra",
+      "nameHi": "दशहरा",
+      "date": "2026-10-20",
+      "category": "Devi"
+    },
+    {
+      "name": "Dhanteras",
+      "nameHi": "धनतेरस",
+      "date": "2026-11-06",
+      "category": "Lakshmi"
+    },
+    {
+      "name": "Diwali Lakshmi Puja",
+      "nameHi": "दीवाली लक्ष्मी पूजा",
+      "date": "2026-11-08",
+      "category": "Lakshmi"
+    },
+    {
+      "name": "Mahashivratri",
+      "nameHi": "महाशिवरात्रि",
+      "date": "2027-03-06",
+      "category": "Shiva"
+    },
+    {
+      "name": "Ram Navami",
+      "nameHi": "राम नवमी",
+      "date": "2027-04-15",
+      "category": ""
+    }
+  ]
+}
