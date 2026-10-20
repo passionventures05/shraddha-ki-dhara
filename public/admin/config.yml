@@ -8,7 +8,7 @@ backend:
   name: github
   repo: passionventures05/shraddha-ki-dhara             # <-- EDIT (your GitHub "username/repository")
   branch: main
-  base_url: https://shraddha-cms-auth.YOUR_WORKERS_SUBDOMAIN.workers.dev   # <-- EDIT (filled in after the worker is deployed)
+  base_url:   base_url: https://shraddha-cms-auth.passionventures.workers.dev   # <-- EDIT (filled in after the worker is deployed)
   auth_endpoint: auth
   commit_messages:
     create: 'Add kit "{{slug}}"'
