@@ -13,6 +13,7 @@ import Gallery from "@/components/home/Gallery";
 import LightDiya from "@/components/home/LightDiya";
 import { ParallaxMandala } from "@/components/home/effects";
 import KitImage from "@/components/shop/KitImage";
+import { ArchFrame, HangingPair, Pillars, Toran } from "@/components/royal";
 
 const faqs: Record<Lang, [string, string][]> = {
   en: [
@@ -54,7 +55,7 @@ export default function Home() {
   return (
     <>
       {/* Hero banner: 4:3 on phones, wide on laptops */}
-      <section>
+      <section className="relative z-[2]" data-hero>
         <picture>
           <source media="(min-width: 768px)" srcSet="/banner-desktop.webp" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -64,7 +65,9 @@ export default function Home() {
         <Foil />
       </section>
 
-      <Reveal className="px-4 pb-6 pt-12 text-center">
+      <div className="relative">
+      <HangingPair />
+      <Reveal className="px-[4.5rem] pb-6 pt-12 text-center sm:px-24 lg:px-4">
         <p className="font-display text-3xl italic text-maroon md:text-4xl">{t("tag")}</p>
         <div className="mt-8 flex flex-wrap justify-center gap-6">
           <Link href="/products/" className="btn">{t("shop")}</Link>
@@ -74,6 +77,7 @@ export default function Home() {
           {(["trust1", "trust2", "trust3"] as const).map((k) => <li key={k} className="chip"><span className="text-gold">✦</span>{t(k)}</li>)}
         </ul>
       </Reveal>
+      </div>
 
       <MantraOfDay />
       <FestivalCountdown />
@@ -90,7 +94,9 @@ export default function Home() {
       </section>
 
       {/* Shop by puja */}
-      <section className="mx-auto max-w-6xl px-4 py-24">
+      <section>
+        <Toran />
+      <div className="mx-auto max-w-6xl px-4 pb-24 pt-12">
         <Heading title={t("shopBy")} eyebrow={t("products")} />
         <div className="grid grid-cols-2 gap-5 md:grid-cols-3 md:gap-8">
           {kits.map((k, i) => (
@@ -107,6 +113,7 @@ export default function Home() {
             </Reveal>
           ))}
         </div>
+      </div>
       </section>
 
       <BlessingStrip />
@@ -146,12 +153,10 @@ export default function Home() {
       {/* Our story, with a diya to light */}
       <section className="relative mx-auto grid max-w-6xl items-center gap-12 overflow-hidden px-4 py-24 md:grid-cols-2">
         <Reveal>
-          <Jharokha className="relative mx-auto h-[28rem] w-72 md:w-80">
-            <div className="metal grid h-full place-items-center">
-              <div aria-hidden style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", pointerEvents: "none" }}><Mandala className="spin-slow h-80 w-80 text-gold2 opacity-30" /></div>
-              <div className="text-center"><LightDiya /><p className="gold-text -mt-2 font-display text-6xl">ॐ</p></div>
-            </div>
-          </Jharokha>
+          <ArchFrame className="mx-auto w-[17rem] md:w-[21rem]">
+            <div aria-hidden style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", paddingTop: "30%", pointerEvents: "none" }}><Mandala className="spin-slow h-64 w-64 text-gold2 opacity-30" /></div>
+            <div className="text-center"><LightDiya /><p className="gold-text -mt-2 font-display text-6xl">ॐ</p></div>
+          </ArchFrame>
         </Reveal>
         <Reveal className="text-center md:text-left" delay={150}>
           <p className="mb-2 text-xs font-medium uppercase tracking-[.3em] text-gold3">{t("storyTag")}</p>
@@ -191,6 +196,7 @@ export default function Home() {
 
       {/* Closing invitation */}
       <section className="metal"><Foil />
+        <Pillars />
         <div className="relative mx-auto max-w-4xl px-4 py-24 text-center">
           <ParallaxMandala className="h-[30rem] w-[30rem] text-gold2 opacity-15" />
           <Lotus className="mx-auto h-12 w-20 text-gold2" />

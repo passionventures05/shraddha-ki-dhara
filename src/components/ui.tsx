@@ -6,7 +6,8 @@ import { useLang, type K } from "@/lib/lang";
 import { useCart } from "@/lib/useCart";
 import { site } from "@/lib/site";
 import { ringBell, setSound, soundOn } from "@/lib/sound";
-import { ArchOrnament, Icon, Lotus, Mandala, Phone, SacredDivider, TempleSkyline } from "./ornaments";
+import { Icon, Lotus, Mandala, Phone, TempleSkyline } from "./ornaments";
+import { LotusDivider } from "./royal";
 
 export const Foil = () => <div className="foil" />;
 
@@ -38,10 +39,9 @@ export function Petals() {
 export function Heading({ title, sub, eyebrow, light }: { title: string; sub?: string; eyebrow?: string; light?: boolean }) {
   return (
     <div className="mb-12 text-center">
-      <ArchOrnament className={`mb-3 ${light ? "text-gold2" : "text-gold"}`} />
       {eyebrow && <p className={`mb-2 text-xs font-medium uppercase tracking-[.3em] ${light ? "text-gold2" : "text-gold3"}`}>{eyebrow}</p>}
       <h2 className="foil-title text-4xl md:text-6xl">{title}</h2>
-      <SacredDivider kind="tilak" className={`my-4 ${light ? "!text-gold2" : ""}`} />
+      <LotusDivider light={light} />
       {sub && <p className="mx-auto max-w-xl text-lg italic opacity-90">{sub}</p>}
     </div>
   );

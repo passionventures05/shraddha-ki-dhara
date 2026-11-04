@@ -1,12 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { SEQ } from "@/lib/ceremony";
+import { scrollTour } from "@/lib/fall";
 import { doneKey, formatLaunchLabel, isLocalHost, launch, resolveLaunch, toIstInput } from "@/lib/launch";
-import { firePoppers } from "@/lib/poppers";
+import { ringBell } from "@/lib/sound";
 import { site } from "@/lib/site";
+import CeremonyStage from "./CeremonyStage";
 
-/** Keep these in step with --lc-cut-ms / --lc-open-ms / --lc-fade-ms in launch.css */
-const TIMING = { cut: 1150, open: 2700, fade: 900 };
+/** Keep these in step with --lc-cut-ms / --lc-open-ms / --lc-fade-ms in launch.css (and SEQ in lib/ceremony.ts) */
+const TIMING = { cut: SEQ.cut, open: SEQ.open, fade: SEQ.fade };
 const TIMING_REDUCED = { cut: 350, open: 900, fade: 400 };
 
 type Phase = "locked" | "cutting" | "opening" | "open" | "gone";
@@ -170,7 +173,9 @@ export default function LaunchCeremony() {
   const [secs, setSecs] = useState<number | null>(null);
   const [label, setLabel] = useState("");
   const [tug, setTug] = useState(false);
-  const [poppers, setPoppers] = useState(false);
+  const [stageOn, setStageOn] = useState(false); // the kalash / coconut / deities stage
+  const [play, setPlay] = useState(false); // true once the ribbon is cut and the ritual begins
+  const [fastOpen, setFastOpen] = useState(false);
   const [studio, setStudio] = useState(false);
   const [studioValue, setStudioValue] = useState("");
 
@@ -180,7 +185,7 @@ export default function LaunchCeremony() {
   const firstSecs = useRef<number | null>(null);
   const tickRef = useRef<number | undefined>(undefined);
   const timers = useRef<number[]>([]);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const tourStop = useRef<(() => void) | null>(null);
 
   const go = (p: Phase) => {
     phaseRef.current = p;
@@ -198,7 +203,8 @@ export default function LaunchCeremony() {
     } catch {
       /* private mode: just play it */
     }
-    if (!launch.enabled || Number.isNaN(r.launchAt) || (seen && !r.replay)) {
+    const late = !r.replay && launch.lateGraceMinutes > 0 && Date.now() - r.launchAt > launch.lateGraceMinutes * 60000;
+    if (!launch.enabled || Number.isNaN(r.launchAt) || (seen && !r.replay) || late) {
       root.setAttribute("data-launch", "done");
       go("gone");
       return;
@@ -212,6 +218,7 @@ export default function LaunchCeremony() {
     setLabel(formatLaunchLabel(r.launchAt));
     root.setAttribute("data-launch", "pending");
     lockPage(true);
+    setStageOn(!reducedMotion());
 
     const tick = () => {
       const s = Math.max(0, Math.ceil((launchAtRef.current - (Date.now() + clockOffset.current)) / 1000));
@@ -246,12 +253,39 @@ export default function LaunchCeremony() {
     };
   }, []);
 
-  useEffect(() => () => timers.current.forEach((t) => window.clearTimeout(t)), []);
+  useEffect(
+    () => () => {
+      timers.current.forEach((t) => window.clearTimeout(t));
+      tourStop.current?.();
+    },
+    [],
+  );
 
-  /* ---- the cut: ribbon parts -> curtains draw open -> poppers ---- */
+  /* ---- the curtains draw open (the stage tells us when; "fast" is used by Skip) ---- */
+  const openCurtains = useCallback((fast = false) => {
+    if (phaseRef.current !== "cutting") return;
+    const t = reducedMotion() ? TIMING_REDUCED : TIMING;
+    const open = fast ? 700 : t.open;
+    if (fast) setFastOpen(true);
+    go("opening");
+    ringBell();
+    timers.current.push(window.setTimeout(() => go("open"), open));
+    timers.current.push(window.setTimeout(() => go("gone"), open + t.fade));
+  }, []);
+
+  /* ---- the show is over: give the website back, then take a slow tour of it ---- */
+  const endShow = useCallback((tour: boolean) => {
+    lockPage(false);
+    document.documentElement.setAttribute("data-launch", "done");
+    setStageOn(false);
+    if (tour && !reducedMotion()) tourStop.current = scrollTour({ downSpeed: SEQ.tourSpeedDown, upSpeed: SEQ.tourSpeedUp, pause: SEQ.tourPause });
+  }, []);
+
+  /* ---- the cut: ribbon parts -> the stage takes over (ritual, curtains, show) ---- */
   const startCut = useCallback(() => {
     if (phaseRef.current !== "locked") return;
-    const t = reducedMotion() ? TIMING_REDUCED : TIMING;
+    const reduced = reducedMotion();
+    const t = reduced ? TIMING_REDUCED : TIMING;
     try {
       localStorage.setItem(doneKey(launchAtRef.current), "1");
     } catch {
@@ -261,15 +295,14 @@ export default function LaunchCeremony() {
     setTug(false);
     go("cutting");
     const later = (fn: () => void, ms: number) => timers.current.push(window.setTimeout(fn, ms));
-    later(() => go("opening"), t.cut);
-    later(() => {
-      go("open");
-      lockPage(false);
-      document.documentElement.setAttribute("data-launch", "done");
-      setPoppers(true);
-    }, t.cut + t.open);
-    later(() => go("gone"), t.cut + t.open + t.fade);
-  }, []);
+    if (reduced) {
+      // gentle version for people who asked for less motion: just open the curtains
+      later(() => openCurtains(), t.cut);
+      later(() => endShow(false), t.cut + t.open + t.fade);
+    } else {
+      later(() => setPlay(true), t.cut);
+    }
+  }, [openCurtains, endShow]);
 
   const ready = mode === "manual" && phase === "locked" && secs !== null && secs <= launch.cutWindowSeconds;
 
@@ -301,15 +334,6 @@ export default function LaunchCeremony() {
     }
     setTug(secs <= Math.ceil(launch.autoOpenDelayMs / 1000));
   }, [mode, phase, secs, startCut]);
-
-  useEffect(() => {
-    if (!poppers || !canvasRef.current) return;
-    return firePoppers(canvasRef.current, {
-      colors: launch.theme.confetti,
-      reduced: reducedMotion(),
-      onDone: () => setPoppers(false),
-    });
-  }, [poppers]);
 
   const cut = () => {
     if (ready) startCut();
@@ -352,6 +376,7 @@ export default function LaunchCeremony() {
           data-mode={mode}
           data-ready={ready ? "1" : "0"}
           data-tug={tug ? "1" : "0"}
+          data-fast={fastOpen ? "1" : "0"}
           style={vars}
           role="dialog"
           aria-modal="true"
@@ -408,11 +433,9 @@ export default function LaunchCeremony() {
           </div>
 
           <div className="lc-ui lc-ui--top">
-            <p className="lc-brand-hi" lang="hi">श्रद्धा की धारा</p>
-            <p className="lc-brand">{site.name}</p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="lc-emblem" src="/ceremony/emblem.webp" width={720} height={704} alt={site.name} draggable={false} />
             <h1 className="lc-title">{launch.title}</h1>
-            <span className="lc-orn" aria-hidden="true" />
-            <p className="lc-tagline">{launch.tagline}</p>
           </div>
 
           <div className="lc-ui lc-ui--bottom">
@@ -451,7 +474,7 @@ export default function LaunchCeremony() {
           )}
         </div>
       )}
-      {poppers && <canvas ref={canvasRef} className="lc-confetti" aria-hidden="true" data-lc="" />}
+      {stageOn && <CeremonyStage play={play} onOpenCurtains={openCurtains} onEnd={(skipped) => endShow(!skipped)} />}
     </>
   );
 }

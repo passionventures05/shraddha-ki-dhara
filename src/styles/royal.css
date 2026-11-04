@@ -1,0 +1,91 @@
+/* =====================================================================
+   ROYAL ORNAMENTS  (components in src/components/royal.tsx, images in public/ornaments)
+   Motion is transform-only. --sw is set by the scroll spring; .sway is the idle breeze.
+   ===================================================================== */
+
+.swing { transform-origin: 50% 0; transform: rotate(var(--sw, 0deg)); will-change: transform; }
+.sway { display: block; transform-origin: 50% 0; animation: sway var(--sd, 7s) ease-in-out var(--sl, 0s) infinite alternate; }
+@keyframes sway {
+  from { transform: rotate(calc(var(--sa, 1.3deg) * -1)); }
+  to { transform: rotate(var(--sa, 1.3deg)); }
+}
+
+/* ---- Hanging diya and temple bell (hang from under the hero banner) ---- */
+.hang { position: absolute; top: -8px; z-index: 1; display: block; pointer-events: none; }
+.hang img { display: block; width: 100%; height: auto; filter: drop-shadow(0 12px 14px rgba(92, 15, 25, 0.28)); }
+.hang-diya { left: max(0.5rem, calc(50% - 31rem)); width: clamp(64px, 11vw, 168px); }
+.hang-bell { right: max(0.5rem, calc(50% - 31rem)); width: clamp(44px, 7.6vw, 116px); pointer-events: auto; cursor: pointer; padding: 0; border: 0; background: none; -webkit-tap-highlight-color: transparent; }
+.hang-bell:focus-visible { outline: 2px solid #0e7358; outline-offset: 4px; border-radius: 12px; }
+
+.diya-wrap { position: relative; }
+.lamp-flame { position: absolute; width: 8.4%; aspect-ratio: 24 / 56; transform: translate(-50%, -88%); pointer-events: none; }
+.lamp-flame svg { display: block; width: 100%; height: 100%; overflow: visible; transform-origin: 50% 100%; filter: drop-shadow(0 0 5px rgba(255, 170, 40, 0.95)); animation: lampflick var(--fd, 2.6s) ease-in-out var(--fl, 0s) infinite; }
+.lamp-flame::after { content: ""; position: absolute; left: 50%; top: 66%; width: 430%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 190, 70, 0.55), rgba(255, 150, 30, 0.16) 40%, transparent 68%); animation: lampglow var(--fd, 2.6s) ease-in-out var(--fl, 0s) infinite; }
+@keyframes lampflick {
+  0%, 100% { transform: scale(1, 1) skewX(0); }
+  22% { transform: scale(0.94, 1.08) skewX(-3deg); }
+  48% { transform: scale(1.05, 0.94) skewX(2deg); }
+  74% { transform: scale(0.97, 1.05) skewX(-1.5deg); }
+}
+@keyframes lampglow { 0%, 100% { opacity: 0.85; } 40% { opacity: 1; } 70% { opacity: 0.7; } }
+
+/* ---- Flower trails down both page edges (only where the side margins have room) ---- */
+.trails { display: none; }
+@media (min-width: 1320px) {
+  .trails { display: block; position: fixed; inset: 0; z-index: 20; pointer-events: none; }
+  .trail {
+    --tw: clamp(0px, calc((100vw - 1152px) / 2 - 20px), 132px);
+    position: absolute; top: var(--hdr, 74px);
+    height: min(calc(100vh - var(--hdr, 74px) - 12px), calc(var(--tw) * 6.6));
+    aspect-ratio: 227 / 1500;
+  }
+  .trail > .sway { height: 100%; }
+  .trail-l { left: 8px; }
+  .trail-r { right: 8px; }
+  .trail-art { display: block; width: 100%; height: 100%; background: center top / contain no-repeat; filter: drop-shadow(0 8px 10px rgba(92, 15, 25, 0.22)); }
+  .trail-l .trail-art { background-image: url(/ornaments/trail-lotus.webp); }
+  .trail-r .trail-art { background-image: url(/ornaments/trail-marigold.webp); }
+}
+
+/* ---- Toran (door garland) ---- */
+.toran-img { width: min(calc(100% - 1rem), 820px); margin: 0 auto; line-height: 0; }
+.toran-img img { display: block; width: 100%; height: auto; filter: drop-shadow(0 10px 12px rgba(92, 15, 25, 0.25)); }
+
+/* ---- Carved arch with a velvet window ---- */
+.arch-frame { position: relative; aspect-ratio: 720 / 1083; }
+.arch-window {
+  position: absolute; inset: 0; display: grid; place-items: center; padding-top: 30%;
+  -webkit-mask: url(/ornaments/arch-window.png) 0 0 / 100% 100% no-repeat;
+  mask: url(/ornaments/arch-window.png) 0 0 / 100% 100% no-repeat;
+}
+.arch-art { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; filter: drop-shadow(0 16px 20px rgba(92, 15, 25, 0.32)); }
+
+/* ---- Lotus rule under headings ---- */
+.lotus-divider { display: block; width: min(23rem, 84%); height: auto; margin: 0.7rem auto 1rem; }
+.lotus-divider.on-dark { filter: drop-shadow(0 0 8px rgba(240, 210, 126, 0.35)); }
+
+/* ---- Filigree corners around a block ---- */
+.cframe { --cs: clamp(72px, 12vw, 132px); position: relative; padding: calc(var(--cs) * 0.62) calc(var(--cs) * 0.7); }
+.cf-line {
+  position: absolute; pointer-events: none; border: 1.5px solid #c8962e; border-radius: 2px;
+  top: calc(var(--cs) * 0.048 - 0.75px); bottom: calc(var(--cs) * 0.048 - 0.75px);
+  left: calc(var(--cs) * 0.028 - 0.75px); right: calc(var(--cs) * 0.028 - 0.75px);
+}
+.cf-corner { position: absolute; width: var(--cs); height: var(--cs); pointer-events: none; }
+.cf-tl { top: 0; left: 0; }
+.cf-tr { top: 0; right: 0; transform: scaleX(-1); }
+.cf-bl { bottom: 0; left: 0; transform: scaleY(-1); }
+.cf-br { bottom: 0; right: 0; transform: scale(-1, -1); }
+.cf-body { position: relative; }
+
+/* ---- Pillars at a section's edges ---- */
+.pillar { position: absolute; top: 50%; display: none; width: clamp(84px, 8.4vw, 128px); height: auto; transform: translateY(-50%); pointer-events: none; filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.35)); }
+.pillar-l { left: max(0.75rem, calc(50% - 36rem)); }
+.pillar-r { right: max(0.75rem, calc(50% - 36rem)); }
+@media (min-width: 1200px) { .pillar { display: block; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .sway, .lamp-flame svg, .lamp-flame::after { animation: none; }
+  .swing { transform: none; will-change: auto; }
+}

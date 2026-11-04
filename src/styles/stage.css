@@ -1,0 +1,130 @@
+/* =====================================================================
+   CEREMONY STAGE (kalash, coconut, water, deities, aarti thali)
+   Component: src/components/CeremonyStage.tsx   Timings: src/lib/ceremony.ts
+   ===================================================================== */
+
+.cs {
+  --cs-floor: 2vh;
+  --cs-kal-h: clamp(110px, 20vh, 270px);
+  --nut: clamp(64px, 13vmin, 130px);
+  position: fixed;
+  inset: 0;
+  z-index: 100002;
+  overflow: hidden;
+  pointer-events: none;
+}
+.cs[data-live="1"] { pointer-events: auto; }
+.cs[data-end="1"] { opacity: 0; transition: opacity 0.9s ease; pointer-events: none; }
+@media (max-height: 780px) and (min-width: 601px) { .cs { --cs-kal-h: clamp(90px, 17vh, 190px); } }
+@media (max-height: 520px) { .cs { --cs-kal-h: clamp(70px, 14vh, 110px); } }
+
+.cs-fill { display: block; width: 100%; height: 100%; object-fit: contain; }
+.cs-cv { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+/* ---------------------------------------------------------------- kalash */
+.cs-kalash {
+  position: absolute; left: 50%; bottom: var(--cs-floor);
+  height: var(--cs-kal-h); aspect-ratio: 467 / 720; transform: translateX(-50%);
+  filter: drop-shadow(0 10px 14px rgb(0 0 0 / 0.5));
+  transition: opacity 1.4s ease;
+}
+.cs:not([data-step="wait"]) .cs-kalash { opacity: 0; }
+
+/* --------------------------------------------------------- coconut and halves */
+.cs-nut, .cs-halves, .cs-flash { position: absolute; left: 50%; bottom: calc(var(--cs-floor) + var(--cs-kal-h) * 0.04); }
+.cs-nut { width: var(--nut); aspect-ratio: 295 / 420; transform: translate(-50%, -110vh); opacity: 0; filter: drop-shadow(0 8px 8px rgb(0 0 0 / 0.45)); }
+.cs[data-step="drop"] .cs-nut { opacity: 1; animation: cs-drop 1.2s linear both; }
+.cs[data-step="crack"] .cs-nut, .cs[data-step="pour"] .cs-nut, .cs[data-step="gone"] .cs-nut { opacity: 0; visibility: hidden; transform: translate(-50%, 0); }
+
+@keyframes cs-drop {
+  0% { transform: translate(-50%, -105vh) rotate(-300deg); animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.55); }
+  50% { transform: translate(-50%, 0) rotate(0deg); animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1); }
+  64% { transform: translate(-50%, -10vh) rotate(16deg); animation-timing-function: cubic-bezier(0.6, 0, 0.9, 0.5); }
+  78% { transform: translate(-50%, 0) rotate(0deg); animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1); }
+  88% { transform: translate(-50%, -3.2vh) rotate(-5deg); animation-timing-function: cubic-bezier(0.6, 0, 0.9, 0.5); }
+  100% { transform: translate(-50%, 0) rotate(0deg); }
+}
+
+.cs-flash {
+  width: calc(var(--nut) * 3); aspect-ratio: 1; border-radius: 50%; opacity: 0;
+  transform: translate(-50%, 50%) scale(0.2);
+  background: radial-gradient(circle, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0.5) 35%, transparent 70%);
+}
+.cs[data-step="crack"] .cs-flash { animation: cs-flash 0.6s ease-out both; }
+@keyframes cs-flash {
+  0% { opacity: 0.95; transform: translate(-50%, 50%) scale(0.2); }
+  100% { opacity: 0; transform: translate(-50%, 50%) scale(1.5); }
+}
+
+.cs-halves { width: calc(var(--nut) * 2.5); height: calc(var(--nut) * 1.15); transform: translateX(-50%); perspective: 700px; opacity: 0; }
+.cs[data-step="crack"] .cs-halves, .cs[data-step="pour"] .cs-halves { opacity: 1; }
+.cs[data-step="gone"] .cs-halves { opacity: 0; transition: opacity 0.7s ease; }
+.cs-half { position: absolute; bottom: 0; width: 50%; aspect-ratio: 1; will-change: transform; filter: drop-shadow(0 8px 8px rgb(0 0 0 / 0.4)); }
+.cs-half--l { left: 0; transform-origin: 80% 70%; }
+.cs-half--r { right: 0; transform-origin: 20% 70%; }
+.cs[data-step="crack"] .cs-half--l { animation: cs-split-l 0.45s ease-out both; }
+.cs[data-step="crack"] .cs-half--r { animation: cs-split-r 0.45s ease-out both; }
+.cs[data-step="pour"] .cs-half--l, .cs[data-step="gone"] .cs-half--l { animation: cs-pour-l 2.45s ease-in-out both; }
+.cs[data-step="pour"] .cs-half--r, .cs[data-step="gone"] .cs-half--r { animation: cs-pour-r 2.45s ease-in-out both; }
+
+@keyframes cs-split-l { from { transform: translate(0) rotate(0); } to { transform: translate(-7%, 0) rotate(-4deg); } }
+@keyframes cs-split-r { from { transform: translate(0) rotate(0); } to { transform: translate(7%, 0) rotate(4deg); } }
+/* the halves lift, come towards you and tip over as they pour (the pictures are already tilted, so these turns are small) */
+@keyframes cs-pour-l {
+  0% { transform: translate(-7%, 0) rotate(-4deg); }
+  26% { transform: translate(-30%, -120%) rotateX(-14deg) rotate(10deg) scale(1.75); }
+  44% { transform: translate(-34%, -128%) rotateX(-18deg) rotate(22deg) scale(1.85); }
+  62% { transform: translate(-30%, -120%) rotateX(-14deg) rotate(12deg) scale(1.75); }
+  80% { transform: translate(-34%, -128%) rotateX(-18deg) rotate(24deg) scale(1.85); }
+  100% { transform: translate(-30%, -120%) rotateX(-14deg) rotate(16deg) scale(1.8); }
+}
+@keyframes cs-pour-r {
+  0% { transform: translate(7%, 0) rotate(4deg); }
+  26% { transform: translate(30%, -120%) rotateX(-14deg) rotate(-10deg) scale(1.75); }
+  44% { transform: translate(34%, -128%) rotateX(-18deg) rotate(-22deg) scale(1.85); }
+  62% { transform: translate(30%, -120%) rotateX(-14deg) rotate(-12deg) scale(1.75); }
+  80% { transform: translate(34%, -128%) rotateX(-18deg) rotate(-24deg) scale(1.85); }
+  100% { transform: translate(30%, -120%) rotateX(-14deg) rotate(-16deg) scale(1.8); }
+}
+
+/* --------------------------------------------------------------- the show */
+.cs-scrim {
+  position: absolute; inset: 0; opacity: 0; transition: opacity 1.4s ease;
+  background: radial-gradient(ellipse 85% 80% at 50% 48%, rgb(50 6 14 / 0.84), rgb(12 1 4 / 0.95));
+}
+.cs[data-show="1"] .cs-scrim { opacity: 1; }
+
+.cs-deities { position: absolute; inset: 0; pointer-events: none; }
+.cs-deity {
+  position: absolute; left: 50%; top: 49%;
+  width: min(92vw, calc(86vh * 0.6667)); height: auto; aspect-ratio: 2 / 3;
+  transform: translate(-50%, -50%) scale(0.9); opacity: 0; will-change: transform, opacity;
+  filter: drop-shadow(0 0 34px rgb(240 200 110 / 0.45)) drop-shadow(0 18px 24px rgb(0 0 0 / 0.45));
+}
+.cs-deity[data-s="in"] { opacity: 1; transform: translate(-50%, -50%) scale(1); transition: opacity var(--d-in) ease-in-out, transform var(--d-in) ease-out; }
+.cs-deity[data-s="out"] { opacity: 0; transform: translate(-50%, -50%) scale(1.07); transition: opacity var(--d-out) ease-in-out, transform var(--d-out) ease-in; }
+.cs-deity[data-s="hold"] { opacity: 1; transform: translate(-50%, -50%) scale(1.03); transition: transform calc(var(--d-hold) + 800ms) linear; }
+/* if a picture cannot be loaded, the deity's name is shown instead of an empty screen */
+.cs-deity--name { display: grid; place-items: center; aspect-ratio: auto; filter: none; text-align: center; font: 600 clamp(36px, 8vmin, 84px) / 1.1 var(--font-display, "Cormorant Garamond", Georgia, serif); color: #f6e7b4; text-shadow: 0 0 28px rgb(240 200 110 / 0.6), 0 3px 8px rgb(0 0 0 / 0.6); }
+
+/* the aarti thali travels in slow circles in front of the deity, like a real aarti */
+.cs-thali { --th-w: clamp(130px, 33vmin, 380px); position: absolute; left: 50%; top: 68%; width: var(--th-w); margin-left: calc(var(--th-w) / -2); opacity: 0; transition: opacity 1.1s ease; }
+.cs[data-thali="1"] .cs-thali { opacity: 1; }
+.cs-thali-x { animation: cs-ox 4.5s ease-in-out infinite alternate; }
+.cs-thali-y { animation: cs-oy 4.5s ease-in-out -6.75s infinite alternate; } /* a quarter turn behind, so the path is a circle and it goes clockwise like an aarti */
+.cs-thali-art { aspect-ratio: 760 / 489; transform-origin: 50% 65%; animation: cs-tilt 4.5s ease-in-out -1s infinite alternate; filter: drop-shadow(0 14px 16px rgb(0 0 0 / 0.5)); }
+@keyframes cs-ox { from { transform: translateX(calc(var(--r) * -1)); } to { transform: translateX(var(--r)); } }
+@keyframes cs-oy { from { transform: translateY(calc(var(--r) * -0.85)); } to { transform: translateY(calc(var(--r) * 0.85)); } }
+@keyframes cs-tilt { from { transform: rotate(-5deg) scale(0.97); } to { transform: rotate(5deg) scale(1.03); } }
+.cs-flame { transform-box: fill-box; transform-origin: 50% 100%; animation: cs-flick 1.5s ease-in-out infinite; }
+@keyframes cs-flick { 0%, 100% { transform: scale(1, 1) skewX(0); } 30% { transform: scale(0.94, 1.08) skewX(-3deg); } 65% { transform: scale(1.05, 0.95) skewX(2deg); } }
+
+/* ------------------------------------------------------------------- skip */
+.cs-skip {
+  position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: 14px; z-index: 5; pointer-events: auto; cursor: pointer;
+  padding: 8px 16px; border-radius: 999px; border: 1px solid rgb(240 210 126 / 0.7);
+  background: rgb(30 5 10 / 0.55); color: #f6e7b4; font: 600 14px/1 var(--lc-sans, system-ui, sans-serif); letter-spacing: 0.04em;
+  -webkit-tap-highlight-color: transparent;
+}
+.cs-skip:hover { background: rgb(30 5 10 / 0.8); }
+.cs-skip:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }

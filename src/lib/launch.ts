@@ -1,5 +1,6 @@
 /**
- * LAUNCH CEREMONY (red velvet curtains + ribbon + countdown + party poppers)
+ * LAUNCH CEREMONY (red velvet curtains + countdown + kalash & coconut ritual + deities + aarti)
+ * The order of events and every timing live in src/lib/ceremony.ts.
  * ------------------------------------------------------------------
  * To run it again for a new launch, change `launchAt` below (India time) and save.
  * A new date automatically counts as a brand-new ceremony, so it plays again.
@@ -15,11 +16,16 @@ export const launch = {
   enabled: true,
 
   /** Launch date & time in INDIA time (IST). Format: YYYY-MM-DDTHH:mm:ss+05:30 */
-  launchAt: "2026-10-20T13:00:00+05:30",
+  launchAt: "2026-11-06T12:40:00+05:30",
 
-  /** Words shown on the curtains. */
+  /** Heading under the emblem on the curtains. (The brand name and tagline are inside the emblem image.) */
   title: "Grand Launch",
-  tagline: "Where Faith Flows, Shraddha Grows",
+
+  /**
+   * The ceremony is for the launch moment. Visitors who arrive more than this many minutes AFTER the launch
+   * time go straight to the website. Set to 0 to let everyone see it once, no matter how late they come.
+   */
+  lateGraceMinutes: 60,
 
   /** On YOUR laptop: the ribbon can be cut during the last N seconds of the countdown. */
   cutWindowSeconds: 30,
@@ -27,7 +33,7 @@ export const launch = {
   /**
    * LIVE website: true  = visitors see the curtains and the live countdown, and the website stays
    *                       closed until the launch time. At that moment the ribbon opens by itself,
-   *                       the curtains slide open and the poppers go off.
+   *                       the curtains slide open and the ceremony plays.
    *               false = no waiting: the ribbon just opens by itself a moment after the page loads.
    * (On your own laptop the ribbon is always cut by tapping it.)
    */
@@ -43,7 +49,6 @@ export const launch = {
     curtainSheen: "#e0485e",
     ink: "#4a0d14", // text colour on the gold ribbon
     glow: "rgba(255, 215, 0, 0.6)",
-    confetti: ["#f0d27e", "#fcf1da", "#ffffff", "#f08a1c", "#f4b63f", "#e0485e", "#c8962e"] as readonly string[],
   },
 } as const;
 
@@ -134,7 +139,7 @@ export const toIstInput = (ms: number) => new Date(ms + 330 * 60000).toISOString
  * and a first-time visitor never sees the site before the curtains. Mirrors the logic above in plain ES5.
  */
 export function bootScript(): string {
-  const cfg = JSON.stringify({ e: launch.enabled, at: launch.launchAt, l: launch.lockLiveSite });
+  const cfg = JSON.stringify({ e: launch.enabled, at: launch.launchAt, l: launch.lockLiveSite, g: launch.lateGraceMinutes * 60000 });
   return (
     "(function(){var d=document.documentElement;try{var c=" +
     cfg +
@@ -150,6 +155,7 @@ export function bootScript(): string {
     "if(m)t=P(decodeURIComponent(m[1].replace(/\\+/g,' ')));if(t!==t)t=P(c.at);" +
     "var r=/[?&]replay(=|&|$)/.test(q),done=false;" +
     "try{done=!!localStorage.getItem('lc-done:'+t+(c.l?':lock':''))}catch(e){}" +
-    "d.setAttribute('data-launch',(t!==t||(done&&!r))?'done':'pending')}catch(e){d.setAttribute('data-launch','done')}})()"
+    "var late=!r&&c.g>0&&Date.now()-t>c.g;" +
+    "d.setAttribute('data-launch',(t!==t||(done&&!r)||late)?'done':'pending')}catch(e){d.setAttribute('data-launch','done')}})()"
   );
 }

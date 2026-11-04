@@ -2,12 +2,15 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import "@/styles/launch.css";
+import "@/styles/royal.css";
+import "@/styles/stage.css";
 import { LangProvider } from "@/lib/lang";
 import { CartProvider } from "@/lib/useCart";
 import { site } from "@/lib/site";
 import { Navbar, Footer, WhatsAppFab, AnnounceBar, Petals } from "@/components/ui";
 import { JharokhaDefs } from "@/components/ornaments";
 import { AartiGlow } from "@/components/home/effects";
+import { SideTrails } from "@/components/royal";
 import LaunchCeremony from "@/components/LaunchCeremony";
 import { bootScript } from "@/lib/launch";
 
@@ -73,6 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <JharokhaDefs />
             <AartiGlow />
             <Petals />
+            <SideTrails />
             <AnnounceBar />
             <Navbar />
             <main>{children}</main>
