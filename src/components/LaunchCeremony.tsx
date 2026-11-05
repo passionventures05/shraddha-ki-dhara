@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { SEQ } from "@/lib/ceremony";
-import { scrollTour } from "@/lib/fall";
+import { startAutoScroll } from "@/lib/auto-scroll";
 import { doneKey, formatLaunchLabel, isLocalHost, launch, resolveLaunch, toIstInput } from "@/lib/launch";
 import { ringBell } from "@/lib/sound";
+import { aartiMissing, prepareAarti, startAarti, stopAarti } from "@/lib/aartiAudio";
 import { site } from "@/lib/site";
 import CeremonyStage from "./CeremonyStage";
 
@@ -176,6 +177,7 @@ export default function LaunchCeremony() {
   const [stageOn, setStageOn] = useState(false); // the kalash / coconut / deities stage
   const [play, setPlay] = useState(false); // true once the ribbon is cut and the ritual begins
   const [fastOpen, setFastOpen] = useState(false);
+  const [soundHint, setSoundHint] = useState(false); // "tap anywhere for sound" note on the live countdown
   const [studio, setStudio] = useState(false);
   const [studioValue, setStudioValue] = useState("");
 
@@ -220,6 +222,13 @@ export default function LaunchCeremony() {
     lockPage(true);
     setStageOn(!reducedMotion());
 
+    // the shankh + bell clip: load it now, and unlock it on the visitor's first tap (live site has no ribbon click)
+    let hintOff = () => {};
+    if (!reducedMotion()) {
+      hintOff = prepareAarti({ onTap: () => setSoundHint(false), onMissing: () => setSoundHint(false) });
+      setSoundHint(true);
+    }
+
     const tick = () => {
       const s = Math.max(0, Math.ceil((launchAtRef.current - (Date.now() + clockOffset.current)) / 1000));
       setSecs((prev) => (prev === s ? prev : s));
@@ -250,6 +259,7 @@ export default function LaunchCeremony() {
     return () => {
       window.clearInterval(tickRef.current);
       lockPage(false);
+      hintOff();
     };
   }, []);
 
@@ -257,28 +267,33 @@ export default function LaunchCeremony() {
     () => () => {
       timers.current.forEach((t) => window.clearTimeout(t));
       tourStop.current?.();
+      stopAarti(false);
     },
     [],
   );
 
   /* ---- the curtains draw open (the stage tells us when; "fast" is used by Skip) ---- */
   const openCurtains = useCallback((fast = false) => {
+    if (fast) stopAarti(true); // Skip: fade the clip out (even if the curtains are already open)
     if (phaseRef.current !== "cutting") return;
     const t = reducedMotion() ? TIMING_REDUCED : TIMING;
     const open = fast ? 700 : t.open;
     if (fast) setFastOpen(true);
     go("opening");
-    ringBell();
+    if (aartiMissing()) ringBell(); // fallback only: the real clip replaces the synthesised bell
     timers.current.push(window.setTimeout(() => go("open"), open));
     timers.current.push(window.setTimeout(() => go("gone"), open + t.fade));
   }, []);
 
-  /* ---- the show is over: give the website back, then take a slow tour of it ---- */
+  /* ---- the show is over: give the website back, then slowly drift down it, top to bottom ---- */
   const endShow = useCallback((tour: boolean) => {
     lockPage(false);
     document.documentElement.setAttribute("data-launch", "done");
     setStageOn(false);
-    if (tour && !reducedMotion()) tourStop.current = scrollTour({ downSpeed: SEQ.tourSpeedDown, upSpeed: SEQ.tourSpeedUp, pause: SEQ.tourPause });
+    if (tour) {
+      tourStop.current?.();
+      tourStop.current = startAutoScroll(); // skips itself for reduced-motion visitors
+    }
   }, []);
 
   /* ---- the cut: ribbon parts -> the stage takes over (ritual, curtains, show) ---- */
@@ -294,6 +309,8 @@ export default function LaunchCeremony() {
     window.clearInterval(tickRef.current);
     setTug(false);
     go("cutting");
+    setSoundHint(false);
+    if (!reduced) startAarti(); // t = 0 of the ceremony
     const later = (fn: () => void, ms: number) => timers.current.push(window.setTimeout(fn, ms));
     if (reduced) {
       // gentle version for people who asked for less motion: just open the curtains
@@ -440,6 +457,7 @@ export default function LaunchCeremony() {
 
           <div className="lc-ui lc-ui--bottom">
             <p className="lc-when">{label}</p>
+            {soundHint && mode === "auto" && phase === "locked" && <p className="lc-sound">{"\u{1F514}"} Tap anywhere for sound</p>}
             <p className="lc-hint" aria-live="polite">
               {mode === "auto" && (!launch.lockLiveSite || secs === 0 || phase !== "locked")
                 ? "Opening the doors\u2026"

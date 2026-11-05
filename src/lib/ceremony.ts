@@ -8,7 +8,7 @@
  *   -> the curtains draw open and flowers fall (like flowers poured over an idol)
  *   -> SHOW     the deities appear one by one while an aarti thali circles in front of them;
  *               gold coins and flowers rain from Durga Maa at the end
- *   -> the website scrolls slowly to the bottom and back to the top
+ *   -> the website slowly scrolls down to the bottom (src/lib/auto-scroll.ts)
  *
  * Change a number here and the whole sequence follows. (launch.css has --lc-open-ms for the curtain
  * speed; keep `open` below in step with it.)
@@ -43,7 +43,7 @@ export const SEQ = {
   flowersFor: 7500, // flower rain after the curtains start opening
   deityStart: 1900, // first deity appears this long after the curtains start opening
   deityIn: 1800,
-  deityHold: 3000,
+  deityHold: 4000, // how long each deity stays fully visible (fade in/out times are separate, below)
   deityOut: 1800,
   deityGap: 150,
   lastHoldExtra: 1500, // Durga Maa stays a little longer
@@ -53,11 +53,6 @@ export const SEQ = {
   thaliOut: 1300,
   endPause: 600,
   stageFade: 900,
-
-  // ---- scroll tour (speeds in pixels per second, so a longer page simply takes longer) ----
-  tourSpeedDown: 300, // going down: slow enough to take the page in
-  tourSpeedUp: 520, // coming back up
-  tourPause: 1500,
 } as const;
 
 /** Milliseconds from the start of the ritual to the moment the curtains start to open. */
@@ -92,6 +87,13 @@ export const ASSETS = {
   /** the falling gold coins: four coins cut from Durga Maa's own picture, side by side in one strip */
   coins: "/ceremony/coins.webp",
 } as const;
+
+/**
+ * The shankh + temple-bell clip. It starts the moment the ribbon is cut and is trimmed to run until the scroll starts
+ * (53.5 s with the current timings: 1.15 cut + 6.65 ritual + show + 0.9 stage fade + 0.9 scroll delay).
+ * If the file is missing, the old synthesised bell (lib/sound.ts) rings when the curtains open instead.
+ */
+export const AUDIO = { src: "/ceremony/aarti-bgm.mp3", skipFadeMs: 500 } as const;
 
 /** Everything the ceremony loads ahead of time so nothing pops in late. */
 export const PRELOAD = [...DEITIES.map((d) => `/ceremony/deities/${d.id}.webp`), "/ceremony/emblem.webp", ...Object.values(ASSETS)];
